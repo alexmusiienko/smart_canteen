@@ -47,17 +47,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Location mLastLocation;
     Marker mCurrLocationMarker;
 
-//    private MarkerOptions[] markers;
-    MarkerOptions corpus5 = new MarkerOptions()
-            .position(new LatLng(49.835199, 24.0084904))
-            .title("Їдальня 5 Корпус")
-            .snippet("8:30-16:30");
-
-    MarkerOptions corpus1 = new MarkerOptions()
-            .position(new LatLng(49.83536678, 24.01015341))
-            .title("Їдальня 1 Корпус")
-            .snippet("8:30-16:30");
-
     private GoogleApiClient client;
 
     /**
@@ -98,20 +87,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        mMap.addMarker(corpus1);
-        mMap.addMarker(corpus5);
-//        markers = new MarkerOptions[]{corpus1, corpus5};
 
-//        mMap.addMarker(corpus1);
-//        mMap.addMarker(new MarkerOptions()
-//                .position(new LatLng(49.835199, 24.0084904))
-//                .title("Їдальня 5 Корпус")
-//                .snippet("8:30-16:30"));
-//
-//        mMap.addMarker(new MarkerOptions()
-//                .position(new LatLng(49.83536678, 24.01015341))
-//                .title("Їдальня 1 Корпус")
-//                .snippet("8:30-16:30"));
+        for (DiningRoom diningRoom: DiningRoom.rooms) {
+            mMap.addMarker(diningRoom.marker());
+        }
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this,
@@ -127,35 +106,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
+        mGoogleApiClient=new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
         mGoogleApiClient.connect();
     }
-
-//    Marker corpus5 = mMap.addMarker(new MarkerOptions()
-//            .position(new LatLng(49.835199, 24.0084904))
-//            .title("Їдальня 5 Корпус")
-//            .snippet("8:30-16:30"));
-//
-//    Marker corpus1 = mMap.addMarker(new MarkerOptions()
-//            .position(new LatLng(49.83536678, 24.01015341))
-//            .title("Їдальня 1 Корпус")
-//            .snippet("8:30-16:30"));
-
-
-                
-
-        /*LatLng positions = new LatLng(49.839683, 24.029717);
-        LatLng corpus5 = new LatLng(49.835199, 24.0084904);
-        LatLng corpus1 = new LatLng(49.83536678, 24.01015341);
-        /*mMap.addMarker(new MarkerOptions().position(positions));
-        mMap.addMarker(new MarkerOptions().position(corpus5).title("5 корпус"));
-        mMap.addMarker(new MarkerOptions().position(corpus1).title("Їдальня в 1 корпусі НУ ЛП"));
-       new MarketOptions().position(corpus1).snippet()*/
-
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
