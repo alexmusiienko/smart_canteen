@@ -9,35 +9,27 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class DiningRoom {
 
-//    MarkerOptions corpus5 = new MarkerOptions()
-//            .position(new LatLng(49.835199, 24.0084904))
-//            .title("Їдальня 5 Корпус")
-//            .snippet("8:30-16:30");
-//
-//    MarkerOptions corpus1 = new MarkerOptions()
-//            .position(new LatLng(49.83536678, 24.01015341))
-//            .title("Їдальня 1 Корпус")
-//            .snippet("8:30-16:30");
-
+    int id;
     LatLng coordinate;
     String title;
     String workingHours;
 
-    DiningRoom(LatLng coordinate, String title, String workingHours) {
+    DiningRoom(int id, LatLng coordinate, String title, String workingHours) {
+        this.id = id;
         this.coordinate = coordinate;
         this.title = title;
         this.workingHours = workingHours;
     }
 
     MarkerOptions marker() {
-        return new MarkerOptions().
-                position(coordinate)
+        return new MarkerOptions()
+                .position(coordinate)
                 .title(title)
                 .snippet(workingHours);
     }
 
     static DiningRoom[] rooms = new DiningRoom[]{
-            new DiningRoom(new LatLng(49.835199, 24.0084904), "Їдальня 5 Корпус", "8:30-16:30"),
-            new DiningRoom(new LatLng(49.83536678, 24.01015341), "Їдальня 1 Корпус", "8:30-16:30")
+            new DiningRoom(0, new LatLng(49.835199, 24.0084904), "Їдальня 5 Корпус", "8:30-16:30"),
+            new DiningRoom(1, new LatLng(49.83536678, 24.01015341), "Їдальня 1 Корпус", "8:30-16:30")
     };
 }
