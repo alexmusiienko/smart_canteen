@@ -7,11 +7,14 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +23,7 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.fitness.data.Goal;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -35,13 +39,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.vision.text.Text;
+
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
-
+    private BottomSheetBehavior bsBehavior;
     private GoogleMap mMap;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
@@ -59,6 +66,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         setContentView(R.layout.activity_maps);
 
+        findViewById(R.id.r_layout).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Intent myIntent = new Intent(MapsActivity.this, MenuActivity.class);
+                MapsActivity.this.startActivity(myIntent);
+            }
+        });
+        View bottomSheet = findViewById(R.id.bottom_sheet);
+        bsBehavior = BottomSheetBehavior.from(bottomSheet);
+        bsBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    bsBehavior.setPeekHeight(150);
+                } else {
+                    bsBehavior.setPeekHeight(0);
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
+
+        List<Dish> dishes = JSONParser.loadMenu(getApplicationContext());
+
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
@@ -67,12 +102,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
-
-
-    // ATTENTION: This was auto-generated to implement the App Indexing API.
-    // See https://g.co/AppIndexing/AndroidStudio for more information.
-//    client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-//
 
     /**
      * Manipulates the map once available.
@@ -83,10 +112,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+
+        // TODO: - костиль
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                for (DiningRoom diningRoom: DiningRoom.rooms) {
+                    LatLng markerPosition = marker.getPosition();
+                    Location loc1 = new Location("");
+                    loc1.setLatitude(markerPosition.latitude);
+                    loc1.setLongitude(markerPosition.longitude);
+                    Location loc2 = new Location("");
+                    loc2.setLatitude(diningRoom.coordinate.latitude);
+                    loc2.setLongitude(diningRoom.coordinate.longitude);
+
+                    if (loc1.distanceTo(loc2) < 0.1) {
+                        ((TextView) findViewById(R.id.canteen_title)).setText(diningRoom.title);
+                        ((TextView) findViewById(R.id.canteen_details)).setText(diningRoom.workingHours);
+                        bsBehavior.setPeekHeight(150);
+                        bsBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                        break;
+                    }
+                }
+                return true;
+            }
+        });
 
         for (DiningRoom diningRoom: DiningRoom.rooms) {
             mMap.addMarker(diningRoom.marker());
