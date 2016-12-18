@@ -32,7 +32,9 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:background="#FAFAFA"
-                        android:padding="6dip" >
+                        android:padding="6dip"
+                        android:id="@+id/r_layout"
+            >
 
             <ImageView
                 android:id="@+id/icon"

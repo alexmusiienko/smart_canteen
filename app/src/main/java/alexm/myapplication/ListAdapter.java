@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.util.List;
+
 /**
  * Created by alexm on 11/28/2016.
  */
@@ -50,3 +52,4 @@ public class ListAdapter extends BaseAdapter {
         return aView;
     }
 }
+

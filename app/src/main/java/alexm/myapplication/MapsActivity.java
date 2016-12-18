@@ -41,6 +41,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.vision.text.Text;
 
+import java.util.List;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -64,6 +66,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         setContentView(R.layout.activity_maps);
 
+        findViewById(R.id.r_layout).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Intent myIntent = new Intent(MapsActivity.this, MenuActivity.class);
+                MapsActivity.this.startActivity(myIntent);
+            }
+        });
         View bottomSheet = findViewById(R.id.bottom_sheet);
         bsBehavior = BottomSheetBehavior.from(bottomSheet);
         bsBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
@@ -81,6 +91,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
+
+        List<Dish> dishes = JSONParser.loadMenu(getApplicationContext());
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
